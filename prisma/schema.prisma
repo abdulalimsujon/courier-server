@@ -1,0 +1,112 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum UserRole {
+  ADMIN
+  CUSTOMER
+  MERCHANT
+}
+
+enum ParcelType {
+  REGULAR
+  EXPRESS
+}
+
+enum OrderStatus {
+  PROGRESS
+  OUT
+  CANCEL
+}
+
+enum IssueType {
+  PICKUP
+  DELIVERY
+  PAYMENT 
+  BILLINGANDCHARGES
+  SERVICES
+  OHTERS
+}
+enum TokenStatus {
+  OPEN
+  RESOLVE
+  PENDING
+
+}
+
+model User {
+  id             Int        @id @default(autoincrement())
+  businessName   String?    // optional for merchants
+  username       String     @unique
+  email          String     @unique
+  phone          String     @unique
+  address        String?
+  password       String
+  role           UserRole   @default(MERCHANT) 
+  createdAt      DateTime   @default(now())
+  updatedAt      DateTime   @updatedAt
+
+  // Relation: One merchant can have many customers
+  customers      Customer[]
+}
+
+model Customer {
+  id              Int       @id @default(autoincrement())
+  name            String
+  email           String    @unique
+  phone           String    @unique
+  postalCode      String?
+  shippingAddress String
+  billingAddress  String
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  // Relation: Customer belongs to a Merchant (User)
+  merchantId      Int
+  merchant        User      @relation(fields: [merchantId], references: [id])
+  parcel       Parcel []
+}
+
+ 
+model Parcel {
+  
+  id Int @id @default(autoincrement())
+  parcelName String 
+  description String
+  address String
+  invoice String? 
+  notes String 
+  height Int @default(0)
+  weight Int @default(0)
+  length Int @default(0)
+
+  customerId Int 
+  customer Customer @relation(fields: [customerId],references: [id])
+    // 1:1 Relation
+  order       Order? 
+}
+
+model Order {
+   id Int @id @default(autoincrement())
+   location String 
+   deliveryTime String 
+   Status OrderStatus
+     // 1:1 Relation
+  parcelId     Int  @unique
+  parcel       Parcel @relation(fields: [parcelId], references: [id])
+}
+
+model Token { 
+  id Int @id @default(autoincrement())
+  typeOfIssue String 
+  description String 
+  createdAt       DateTime  @default(now())
+  Status   TokenStatus 
+  
+}
