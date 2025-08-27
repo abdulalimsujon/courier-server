@@ -1,4 +1,3 @@
-/* eslint-disable prettier/prettier */
 import * as bcrypt from 'bcrypt';
 import { Injectable } from '@nestjs/common';
 import { User, Prisma } from '@prisma/client';
@@ -10,34 +9,20 @@ export class UserService {
   constructor(private readonly databaseService: databaseService) {}
 
   async user(email: string): Promise<User | null> {
-  
-
     return this.databaseService.user.findUnique({
       where: { email },
     });
   }
 
-  
-
-async createUser(data: CreateUserDto) {
-  // Hash password
-  const hashedPassword = await bcrypt.hash(data.password, 10);
-
-  // eslint-disable-next-line no-useless-catch
-  try {
+  async createUser(data: CreateUserDto) {
+    const hashedPassword = await bcrypt.hash(data.password, 10);
     return await this.databaseService.user.create({
       data: {
         ...data,
         password: hashedPassword,
       },
     });
-  } catch (error) {
- 
-    throw error;
   }
-}
-
-
   async updateUser(params: {
     where: Prisma.UserWhereUniqueInput;
     data: Prisma.UserUpdateInput;

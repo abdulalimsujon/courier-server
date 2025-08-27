@@ -1,7 +1,6 @@
 import { Injectable, UnauthorizedException, Logger } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
-
 import { User } from '@prisma/client';
 import { UserService } from 'src/main/user/user.service';
 
@@ -23,7 +22,7 @@ export class AuthService {
     name: string;
     email: string;
   }> {
-    const user: User | null = await this.usersService.findOneByEmail(email);
+    const user: User | null = await this.usersService.findOneByEmail(email); // ✅ unified
 
     if (!user || !user.password) {
       this.logger.warn(`Failed login attempt: email=${email}`);
@@ -52,5 +51,15 @@ export class AuthService {
       email: user.email,
       access_token: accessToken,
     };
+  }
+
+  async validateUser(email: string, pass: string): Promise<any> {
+    const user = await this.usersService.findOneByEmail(email);
+    if (user && (await bcrypt.compare(pass, user.password))) {
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      const { password, ...result } = user;
+      return result;
+    }
+    return null;
   }
 }

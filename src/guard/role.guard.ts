@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+// role.guard.ts
 import {
   Injectable,
   CanActivate,
@@ -6,37 +6,35 @@ import {
   ForbiddenException,
 } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
-import { $Enums } from '@prisma/client';
+import { UserRole } from '@prisma/client';
+import { ROLES_KEY } from 'src/decorator/roles.decorator';
 
 @Injectable()
-export class RolesGuard implements CanActivate {
+export class RoleGuard implements CanActivate {
   constructor(private reflector: Reflector) {}
 
   canActivate(context: ExecutionContext): boolean {
-    const requiredRoles = this.reflector.getAllAndOverride<$Enums.UserRole[]>(
-      'roles',
+    const requiredRoles = this.reflector.getAllAndOverride<UserRole[]>(
+      ROLES_KEY,
       [context.getHandler(), context.getClass()],
     );
 
-    // No roles specified for route → allow access
     if (!requiredRoles) {
-      return true;
+      return true; // No roles required → allow access
     }
 
     // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-    const request = context.switchToHttp().getRequest();
-    const user = request.user as { role?: $Enums.UserRole };
+    const { user } = context.switchToHttp().getRequest();
 
-    // Ensure user is authenticated
-    if (!user || !user.role) {
-      throw new ForbiddenException('User not authenticated');
+    if (!user) {
+      throw new ForbiddenException('User not found in request');
     }
 
-    // Check if user has at least one required role
-    const hasRole = requiredRoles.includes(user.role);
-
-    if (!hasRole) {
-      throw new ForbiddenException('Insufficient permissions');
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-argument, @typescript-eslint/no-unsafe-member-access
+    if (!requiredRoles.includes(user.role)) {
+      throw new ForbiddenException(
+        `Access denied: Requires role ${requiredRoles.join(', ')}`,
+      );
     }
 
     return true;
