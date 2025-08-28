@@ -7,9 +7,10 @@ import { AuthModule } from './main/auth/auth.module';
 import { PassportLocalStrategy } from './strategy/local.strategy';
 import { CustomerModule } from './customer/customer.module';
 import { PercelModule } from './percel/percel.module';
+import { TokenModule } from './token/token.module';
 
 @Module({
-  imports: [DatabaseModule, UserModule, AuthModule, CustomerModule, PercelModule],
+  imports: [DatabaseModule, UserModule, AuthModule, CustomerModule, PercelModule, TokenModule],
   controllers: [AppController],
   providers: [AppService, PassportLocalStrategy],
 })
