@@ -15,13 +15,15 @@ import { RoleGuard } from 'src/guard/role.guard';
 import { UserRole } from '@prisma/client';
 import { JwtAuthGuard } from 'src/guard/jwt-auth.guard';
 import { Roles } from 'src/decorator/roles.decorator';
+import { ApiSecurity } from '@nestjs/swagger';
 
 @Controller('customer')
+@ApiSecurity('JWT-auth')
+@UseGuards(JwtAuthGuard, RoleGuard)
+@Roles(UserRole.MERCHANT)
 export class CustomerController {
   constructor(private readonly customerService: CustomerService) {}
 
-  @UseGuards(JwtAuthGuard, RoleGuard)
-  @Roles(UserRole.MERCHANT)
   @Post('create')
   create(@Body() createCustomerDto: CreateCustomerDto) {
     return this.customerService.create(createCustomerDto);
