@@ -17,6 +17,7 @@ export class PercelController {
 
   @Post()
   create(@Body() createPercelDto: CreateParcelDto) {
+    console.log('==', createPercelDto);
     return this.percelService.create(createPercelDto);
   }
 

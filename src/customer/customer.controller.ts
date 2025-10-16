@@ -6,21 +6,21 @@ import {
   Patch,
   Param,
   Delete,
-  UseGuards,
+  // UseGuards,
 } from '@nestjs/common';
 import { CustomerService } from './customer.service';
 import { CreateCustomerDto } from './dto/create-customer.dto';
 import { UpdateCustomerDto } from './dto/update-customer.dto';
-import { RoleGuard } from 'src/guard/role.guard';
-import { UserRole } from '@prisma/client';
-import { JwtAuthGuard } from 'src/guard/jwt-auth.guard';
-import { Roles } from 'src/decorator/roles.decorator';
+// import { RoleGuard } from 'src/guard/role.guard';
+// import { UserRole } from '@prisma/client';
+// import { JwtAuthGuard } from 'src/guard/jwt-auth.guard';
+// import { Roles } from 'src/decorator/roles.decorator';
 import { ApiSecurity } from '@nestjs/swagger';
 
 @Controller('customer')
 @ApiSecurity('JWT-auth')
-@UseGuards(JwtAuthGuard, RoleGuard)
-@Roles(UserRole.MERCHANT)
+// @UseGuards(JwtAuthGuard, RoleGuard)
+// @Roles(UserRole.MERCHANT)
 export class CustomerController {
   constructor(private readonly customerService: CustomerService) {}
 

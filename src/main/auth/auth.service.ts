@@ -1,8 +1,15 @@
-import { Injectable, UnauthorizedException, Logger } from '@nestjs/common';
+import {
+  Injectable,
+  UnauthorizedException,
+  Logger,
+  BadRequestException,
+} from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
 import { User } from '@prisma/client';
 import { UserService } from 'src/main/user/user.service';
+import { databaseService } from 'src/database/database.service';
+import { CreateUserDto } from '../user/dto/create-user-dto';
 
 @Injectable()
 export class AuthService {
@@ -11,6 +18,7 @@ export class AuthService {
   constructor(
     private readonly usersService: UserService,
     private readonly jwtService: JwtService,
+    private readonly databaseService: databaseService,
   ) {}
 
   async signIn(
@@ -53,13 +61,21 @@ export class AuthService {
     };
   }
 
-  async validateUser(email: string, pass: string): Promise<any> {
-    const user = await this.usersService.findOneByEmail(email);
-    if (user && (await bcrypt.compare(pass, user.password))) {
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      const { password, ...result } = user;
-      return result;
+  async register(data: CreateUserDto) {
+    const existingUser = await this.databaseService.user.findUnique({
+      where: { email: data.email },
+    });
+
+    if (existingUser) {
+      throw new BadRequestException('Email is already registered');
     }
-    return null;
+    const hashedPassword = await bcrypt.hash(data.password, 10);
+    return await this.databaseService.user.create({
+      data: {
+        ...data,
+        role: 'MERCHANT',
+        password: hashedPassword,
+      },
+    });
   }
 }

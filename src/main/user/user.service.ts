@@ -23,6 +23,9 @@ export class UserService {
       },
     });
   }
+  async allUsers() {
+    return await this.databaseService.user.findMany({});
+  }
   async updateUser(params: {
     where: Prisma.UserWhereUniqueInput;
     data: Prisma.UserUpdateInput;

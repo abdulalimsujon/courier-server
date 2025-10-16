@@ -30,5 +30,5 @@ export class PassportLocalStrategy extends PassportStrategy(Strategy) {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { password: _, ...userWithoutPassword } = user;
     return userWithoutPassword;
-}
+  }
 }

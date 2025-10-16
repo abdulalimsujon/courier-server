@@ -1,17 +1,17 @@
 import { AppModule } from './app.module';
-import { ValidationPipe } from '@nestjs/common';
+import {  ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
-import { GlobalErrorHandlerFilter } from './error/globlaErrorHandler.filter';
+import { GlobalErrorHandlerFilter } from './common/filters/all-exceptions.filter';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
+  const app = await NestFactory.create(AppModule, { cors: true });
 
   const config = new DocumentBuilder()
-    .setTitle('Cats example')
-    .setDescription('The cats API description')
+    .setTitle('Courier API')
+    .setDescription('Courier Service API documentation')
     .setVersion('1.0')
-    .addTag('cats')
+    .addTag('auth')
     .addBearerAuth(
       {
         type: 'http',
@@ -25,11 +25,21 @@ async function bootstrap() {
 
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api', app, document);
+  app.useGlobalPipes(
+    new ValidationPipe({
+      whitelist: true,
+      forbidNonWhitelisted: true,
+      transform: true,
+    }),
+  );
 
-  app.useGlobalPipes(new ValidationPipe());
   app.useGlobalFilters(new GlobalErrorHandlerFilter());
+
+  app.enableCors({
+    origin: '*',
+    credentials: true,
+  });
 
   await app.listen(process.env.PORT ?? 3000);
 }
-
 bootstrap();
