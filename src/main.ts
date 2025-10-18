@@ -1,11 +1,16 @@
 import { AppModule } from './app.module';
-import {  ValidationPipe } from '@nestjs/common';
+import { ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { GlobalErrorHandlerFilter } from './common/filters/all-exceptions.filter';
+import express from 'express';
+import { ExpressAdapter } from '@nestjs/platform-express';
 
+const server = express();
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule, { cors: true });
+  const app = await NestFactory.create(AppModule, new ExpressAdapter(server), {
+    cors: true,
+  });
 
   const config = new DocumentBuilder()
     .setTitle('Courier API')
@@ -42,4 +47,4 @@ async function bootstrap() {
 
   await app.listen(process.env.PORT ?? 3000);
 }
-bootstrap();
+void bootstrap();

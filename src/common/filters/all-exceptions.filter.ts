@@ -12,7 +12,6 @@ import { Response, Request } from 'express';
 import { Prisma } from '@prisma/client';
 import { AppError } from '../errors/app-errors';
 
-
 @Catch()
 export class GlobalErrorHandlerFilter implements ExceptionFilter {
   catch(exception: unknown, host: ArgumentsHost) {
@@ -55,8 +54,7 @@ export class GlobalErrorHandlerFilter implements ExceptionFilter {
         } else if (isErrorObject(exceptionResponse)) {
           const responseMessage = exceptionResponse.message;
           if (typeof responseMessage === 'string') message = responseMessage;
-          else if (Array.isArray(responseMessage))
-            message = responseMessage[0];
+          else if (Array.isArray(responseMessage)) message = responseMessage[0];
           else message = exceptionResponse.error || 'Bad Request';
         }
       } else {
@@ -65,8 +63,7 @@ export class GlobalErrorHandlerFilter implements ExceptionFilter {
         } else if (isErrorObject(exceptionResponse)) {
           const responseMessage = exceptionResponse.message;
           if (typeof responseMessage === 'string') message = responseMessage;
-          else if (Array.isArray(responseMessage))
-            message = responseMessage[0];
+          else if (Array.isArray(responseMessage)) message = responseMessage[0];
         }
       }
     }

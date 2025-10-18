@@ -47,7 +47,6 @@ export class AuthController {
   @ApiOperation({ summary: 'Register a new user' })
   @ApiBody({ type: CreateUserDto })
   async register(@Body() createUserDto: CreateUserDto) {
-    console.log('this is from registratiom auth', createUserDto);
     const user = await this.authService.register({
       ...createUserDto,
       role: 'MERCHANT',

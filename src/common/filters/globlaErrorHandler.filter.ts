@@ -11,7 +11,7 @@ import {
 import { Response, Request } from 'express';
 import { Prisma } from '@prisma/client';
 import { AppError } from '../errors/app-errors';
- // 👈 your custom error class
+// 👈 your custom error class
 
 @Catch()
 export class GlobalErrorHandlerFilter implements ExceptionFilter {
@@ -67,8 +67,7 @@ export class GlobalErrorHandlerFilter implements ExceptionFilter {
         } else if (isErrorObject(exceptionResponse)) {
           const responseMessage = exceptionResponse.message;
           if (typeof responseMessage === 'string') message = responseMessage;
-          else if (Array.isArray(responseMessage))
-            message = responseMessage[0];
+          else if (Array.isArray(responseMessage)) message = responseMessage[0];
         }
       }
     }
