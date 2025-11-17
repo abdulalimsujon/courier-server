@@ -1,12 +1,18 @@
 import * as bcrypt from 'bcrypt';
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { User, Prisma } from '@prisma/client';
 import { databaseService } from 'src/database/database.service';
 import { CreateUserDto } from './dto/create-user-dto';
+import { FindUserQueryDto } from 'src/common/dto/find-user-query-dto';
+import { PaginatedResponse } from 'src/common/interface/pagination-response-interface';
 
 @Injectable()
 export class UserService {
-  constructor(private readonly databaseService: databaseService) {}
+
+  private  UserListChacheKeys : Set<string> = new Set();
+  constructor(private readonly databaseService: databaseService,
+  //  @Inject(CACHE_MANAGER)  private cacheManager:Cache,
+  ) {}
 
   async user(email: string): Promise<User | null> {
     return this.databaseService.user.findUnique({
@@ -23,6 +29,35 @@ export class UserService {
       },
     });
   }
+
+  private generateUserListChahe(query:FindUserQueryDto ) {
+    
+    const {page =1,limit =2,username} = query;
+    return `posts_list_page${page}_limit${limit}_username${username}`
+
+
+  }
+  // async allUsers(query:FindUserQueryDto): Promise<PaginatedResponse<User>> {
+    
+  //   const chacheKey = this.generateUserListChahe(query);
+
+  //   this.UserListChacheKeys.add(chacheKey);
+
+  //   // const getChacheData = await this.cacheManager.get<PaginatedResponse<User>>(chacheKey)
+
+  //   return await this.databaseService.user.findMany({});
+  // }
+  // async updateUser(params: {
+  //   where: Prisma.UserWhereUniqueInput;
+  //   data: Prisma.UserUpdateInput;
+  // }): Promise<User> {
+  //   const { where, data } = params;
+  //   return this.databaseService.user.update({
+  //     data,
+  //     where,
+  //   });
+  // }
+
   async allUsers() {
     return await this.databaseService.user.findMany({});
   }
