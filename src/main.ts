@@ -41,7 +41,7 @@ async function bootstrap() {
       transform: true,
     }),
   );
-
+  
   app.useGlobalFilters(new GlobalErrorHandlerFilter());
 
   app.enableCors({
