@@ -37,16 +37,16 @@ export class UserService {
 
 
   }
-  // async allUsers(query:FindUserQueryDto): Promise<PaginatedResponse<User>> {
+  async allUserssss(query:FindUserQueryDto) {
     
-  //   const chacheKey = this.generateUserListChahe(query);
+    const chacheKey = this.generateUserListChahe(query);
 
-  //   this.UserListChacheKeys.add(chacheKey);
+    this.UserListChacheKeys.add(chacheKey);
 
-  //   // const getChacheData = await this.cacheManager.get<PaginatedResponse<User>>(chacheKey)
+    // const getChacheData = await this.cacheManager.get<PaginatedResponse<User>>(chacheKey)
 
-  //   return await this.databaseService.user.findMany({});
-  // }
+    // return await this.databaseService.user.findMany({});
+  }
   // async updateUser(params: {
   //   where: Prisma.UserWhereUniqueInput;
   //   data: Prisma.UserUpdateInput;
